@@ -26,26 +26,32 @@ namespace NewsInfoAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetBasketball()
+        public List<NewsItem> GetBasketball()
         {
             HtmlWeb web = new HtmlWeb();
             var htmlDoc = web.Load("https://www.espn.com/nba/");
-
-            Debug.WriteLine("Done");
-            foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//section[@class='" + "contentItem contentItem--collection" + "']"))
+            List<NewsItem> items = new List<NewsItem>();
+            foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//section[@class='"
+                + "contentItem__content contentItem__content--story has-image has-video" +
+                " contentItem__content--collection contentItem__content--enhanced contentItem__content--fullWidth" + "']"))
             {
-                NewsItem news = new NewsItem();
-                //contentItem__content contentItem__content--story has - image has - video contentItem__content--collection
-                Debug.WriteLine(node.ChildNodes[1].ParentNode.InnerText);
+                Debug.WriteLine(node.SelectSingleNode("//img").Attributes["data-default-src"].Value);
 
-                //news.Title = node.ChildNodes[0].ChildNodes[0].InnerText;
-                //Debug.WriteLine(node.ChildNodes[0].InnerText);
-                //Debug.WriteLine(node.ChildNodes[1].InnerText);
-                //Debug.WriteLine(node.ChildNodes[1].ChildNodes[0].InnerText);
+                //items.Add(new NewsItem
+                //{
+                //    Title = node.SelectSingleNode("//h1[@class='" + "contentItem__title contentItem__title--story" + "']").InnerText,
+                //    Subtitle = node.SelectSingleNode("//p[@class='" + "contentItem__subhead contentItem__subhead--story" + "']").InnerText,
+                //    PicUrl = node.SelectSingleNode("//img[@class='media-wrapper_image  imageLoaded lazyloaded']").Attributes["data-default-src"].Value
+                //});
+            }
+            for(int i = 0; i < items.Count; i++)
+            {
+                Debug.WriteLine(items[i].Title);
+                Debug.WriteLine(items[i].Subtitle);
+                Debug.WriteLine(items[i].PicUrl);
                 Debug.WriteLine(' ');
             }
-                return null;
-            //return Ok(htmlDoc.DocumentNode.SelectSingleNode("//head//contentItem__title contentItem__title--video"));
+            return items;
         }
     }
 }
